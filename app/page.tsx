@@ -7,6 +7,12 @@ import { use, useCallback, useEffect, useMemo, useState } from "react";
 import { text } from "stream/consumers";
 
 export default function HomePage() {
+  // Checking if we're on the client or server
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
   // Helper function for generating random numbers
   const randomNumberInRange = (min: number, max: number) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -16,22 +22,20 @@ export default function HomePage() {
   // It should run this function upon render of the page
   // TODO: ensure no duplicates can happen
   // TODO: change for loop based on number of cards someone wants
-  const chooseCards = useMemo(() => {
+  const chosenPhrases = (() => {
     let selectedPhrases: Phrase[] = [];
     for (let i = 0; i < 2; i++) {
       let randNum = randomNumberInRange(0, phraseList.length - 1);
       selectedPhrases.push(phraseList[randNum]);
     }
     return selectedPhrases;
-  }, []);
-
-  // State for the chosen phrases
-  const [chosenPhrases] = useState<Phrase[]>(chooseCards);
+  })();
 
   // Map each element in the chosen phrases array to an element
-  const textCards = chosenPhrases.map((phrase, idx) => (
-    <FlashCard key={idx} isImage={false} text={phrase.object + phrase.particle + phrase.kanji}></FlashCard>
-  ));
+  const textCards = chosenPhrases.map((phrase, idx) => {
+    let cardText: string = isClient ? phrase.object + phrase.particle + phrase.kanji : "ローディング中";
+    return <FlashCard key={idx} isImage={false} text={cardText}></FlashCard>;
+  });
   const halfway = Math.floor(textCards.length / 2);
   const textCardsLeft = textCards.slice(0, halfway);
   const textCardsRight = textCards.slice(halfway, textCards.length);
