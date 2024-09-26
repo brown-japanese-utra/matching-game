@@ -4,6 +4,7 @@ import { Center, Grid, Title } from "@mantine/core";
 import FlashCard from "./components/FlashCard/FlashCard";
 import { Phrase, phraseList } from "./components/Phrases";
 import { use, useCallback, useEffect, useMemo, useState } from "react";
+import { text } from "stream/consumers";
 
 export default function HomePage() {
   // Helper function for generating random numbers
@@ -28,27 +29,31 @@ export default function HomePage() {
   const [chosenPhrases] = useState<Phrase[]>(chooseCards);
 
   // Map each element in the chosen phrases array to an element
-  const cards = chosenPhrases.map((phrase, idx) => (
-    <FlashCard
-      key={idx}
-      isImage={false}
-      text={phrase.object + phrase.particle + phrase.kanji}
-    ></FlashCard>
+  const textCards = chosenPhrases.map((phrase, idx) => (
+    <FlashCard key={idx} isImage={false} text={phrase.object + phrase.particle + phrase.kanji}></FlashCard>
   ));
-
+  const halfway = Math.floor(textCards.length / 2);
+  const textCardsLeft = textCards.slice(0, halfway);
+  const textCardsRight = textCards.slice(halfway, textCards.length);
   return (
     <>
       <Center>
         <Title order={1}>日本語のマッチングゲーム</Title>
       </Center>
       <Grid>
+        {/* Words Half */}
         <Grid.Col span={6}>
           <Center>
             <Title order={1}>動詞</Title>
           </Center>
-          {cards}
+          {/* Grid which changes how many columns there are depending on
+          screen size */}
+          <Grid>
+            <Grid.Col span={{ base: 12, sm: 6 }}>{textCardsLeft}</Grid.Col>
+            <Grid.Col span={{ base: 12, sm: 6 }}>{textCardsRight}</Grid.Col>
+          </Grid>
         </Grid.Col>
-
+        {/* Pictures Half */}
         <Grid.Col span={6}>
           <Center>
             <Title order={1}>写真</Title>
