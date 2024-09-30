@@ -3,20 +3,16 @@ import { useState } from "react";
 
 interface FlashCardProps {
   isImage: boolean;
+  selected: boolean;
   text?: string;
+  onSelect: any;
 }
 
 export default function FlashCard(props: FlashCardProps) {
-  const [selected, setSelected] = useState(false);
-
-  function toggle() {
-    setSelected((s) => !s);
-  }
-
-  const color = selected ? "blue" : "white";
+  const color = props.selected ? "blue" : "white";
 
   return (
-    <Button fullWidth color={color} onClick={toggle} variant="outline">
+    <Button fullWidth color={color} onClick={props.onSelect} variant="outline">
       <Paper p="sm" shadow="sm" radius="md">
         <Text ta="center" size="lg">
           {props.text}

@@ -5,6 +5,27 @@ import FlashCard from "./components/FlashCard/FlashCard";
 import { Phrase, phraseList } from "./components/Phrases";
 import { useEffect, useState } from "react";
 
+// Helper function for generating random numbers
+const randomNumberInRange = (min: number, max: number) => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+// Function for setting the list of phrases that were selected
+// It should run this function once upon initial loadup of the page
+// TODO: change for loop based on number of cards someone wants
+let phraseListClone = [...phraseList];
+let cardsAmt = 5;
+
+const chosenPhrases = (function () {
+  let selectedPhrases: Phrase[] = [];
+  for (let i = 0; i < cardsAmt; i++) {
+    let ind = randomNumberInRange(0, phraseListClone.length - 1);
+    selectedPhrases.push(phraseListClone[ind]);
+    phraseListClone.splice(ind, 1);
+  }
+  return selectedPhrases;
+})();
+
 export default function HomePage() {
   // Checking if we're on the client or server
   const [isClient, setIsClient] = useState(false);
@@ -12,31 +33,23 @@ export default function HomePage() {
   useEffect(() => {
     setIsClient(true);
   }, []);
-  // Helper function for generating random numbers
-  const randomNumberInRange = (min: number, max: number) => {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  };
-
-  // Function for setting the list of phrases that were selected
-  // It should run this function upon render of the page
-  // TODO: change for loop based on number of cards someone wants
-  let phraseListClone = [...phraseList];
-  let cardsAmt = 5;
-  const chosenPhrases = (() => {
-    let selectedPhrases: Phrase[] = [];
-    for (let i = 0; i < cardsAmt; i++) {
-      let ind = randomNumberInRange(0, phraseListClone.length - 1);
-      selectedPhrases.push(phraseListClone[ind]);
-      phraseListClone.splice(ind, 1);
-    }
-    return selectedPhrases;
-  })();
 
   // Map each element in the chosen phrases array to an element
+  // Use state to keep track of which button is selected
+  const [selectedTxtButton, setTxtButton] = useState(-1);
   const textCards = chosenPhrases.map((phrase) => {
     let cardText: string = isClient ? phrase.object + phrase.particle + phrase.kanji : "ローディング中";
-    return <FlashCard key={phrase.id} isImage={false} text={cardText}></FlashCard>;
+    return (
+      <FlashCard
+        key={phrase.id}
+        isImage={false}
+        selected={selectedTxtButton === phrase.id}
+        text={cardText}
+        onSelect={() => setTxtButton(phrase.id)}
+      ></FlashCard>
+    );
   });
+
   const halfway = Math.ceil(textCards.length / 2);
   const textCardsLeft = textCards.slice(0, halfway);
   const textCardsRight = textCards.slice(halfway, textCards.length);
