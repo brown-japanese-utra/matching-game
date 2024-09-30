@@ -20,4 +20,52 @@ export const phraseList: Phrase[] = [
     kanji: "閉まる",
     hiragana: "しまる",
   },
+  {
+    object: "まど",
+    particle: "を",
+    kanji: "開ける",
+    hiragana: "あける",
+  },
+  {
+    object: "まど",
+    particle: "が",
+    kanji: "開く",
+    hiragana: "あく",
+  },
+  {
+    object: "電気",
+    particle: "を",
+    kanji: "つける",
+    hiragana: "つける",
+  },
+  {
+    object: "電気",
+    particle: "が",
+    kanji: "つく",
+    hiragana: "つく",
+  },
+  {
+    object: "電気",
+    particle: "を",
+    kanji: "消す",
+    hiragana: "けす",
+  },
+  {
+    object: "電気",
+    particle: "が",
+    kanji: "消える",
+    hiragana: "きえる",
+  },
+  {
+    object: "シャツ",
+    particle: "を",
+    kanji: "汚す",
+    hiragana: "よごす",
+  },
+  {
+    object: "シャツ",
+    particle: "が",
+    kanji: "汚れる",
+    hiragana: "よごれる",
+  },
 ];

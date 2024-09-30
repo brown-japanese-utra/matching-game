@@ -22,9 +22,10 @@ export default function HomePage() {
   // It should run this function upon render of the page
   // TODO: change for loop based on number of cards someone wants
   let phraseListClone = [...phraseList];
+  let cardsAmt = 5;
   const chosenPhrases = (() => {
     let selectedPhrases: Phrase[] = [];
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < cardsAmt; i++) {
       let ind = randomNumberInRange(0, phraseListClone.length - 1);
       selectedPhrases.push(phraseListClone[ind]);
       phraseListClone.splice(ind, 1);
@@ -37,7 +38,7 @@ export default function HomePage() {
     let cardText: string = isClient ? phrase.object + phrase.particle + phrase.kanji : "ローディング中";
     return <FlashCard key={idx} isImage={false} text={cardText}></FlashCard>;
   });
-  const halfway = Math.floor(textCards.length / 2);
+  const halfway = Math.ceil(textCards.length / 2);
   const textCardsLeft = textCards.slice(0, halfway);
   const textCardsRight = textCards.slice(halfway, textCards.length);
   return (
