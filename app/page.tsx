@@ -21,16 +21,16 @@ export default function HomePage() {
   // Function for setting the list of phrases that were selected
   // It should run this function upon render of the page
   // TODO: change for loop based on number of cards someone wants
-  const chosenPhrases = Array.from(
-    (() => {
-      let selectedPhrases: Set<Phrase> = new Set();
-      while (selectedPhrases.size < 2) {
-        let randNum = randomNumberInRange(0, phraseList.length - 1);
-        selectedPhrases.add(phraseList[randNum]);
-      }
-      return selectedPhrases;
-    })()
-  );
+  let phraseListClone = [...phraseList];
+  const chosenPhrases = (() => {
+    let selectedPhrases: Phrase[] = [];
+    for (let i = 0; i < 2; i++) {
+      let ind = randomNumberInRange(0, phraseListClone.length - 1);
+      selectedPhrases.push(phraseListClone[ind]);
+      phraseListClone.splice(ind, 1);
+    }
+    return selectedPhrases;
+  })();
 
   // Map each element in the chosen phrases array to an element
   const textCards = chosenPhrases.map((phrase, idx) => {
