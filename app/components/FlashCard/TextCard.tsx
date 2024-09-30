@@ -1,14 +1,12 @@
-import { Space, Paper, Text, Button, Image } from "@mantine/core";
-import { useState } from "react";
+import { Space, Paper, Text, Button } from "@mantine/core";
 
 interface FlashCardProps {
-  isImage: boolean;
   selected: boolean;
   text?: string;
   onSelect: any;
 }
 
-export default function FlashCard(props: FlashCardProps) {
+export default function TextCard(props: FlashCardProps) {
   const color = props.selected ? "blue" : "white";
 
   return (

@@ -1,9 +1,10 @@
 "use client";
 
-import { Center, Grid, Title } from "@mantine/core";
-import FlashCard from "./components/FlashCard/FlashCard";
+import { Center, Grid, Title, Image } from "@mantine/core";
+import TextCard from "./components/FlashCard/TextCard";
 import { Phrase, phraseList } from "./components/Phrases";
 import { useEffect, useState } from "react";
+import ImageCard from "./components/FlashCard/ImageCard";
 
 // Helper function for generating random numbers
 const randomNumberInRange = (min: number, max: number) => {
@@ -26,6 +27,16 @@ const chosenPhrases = (function () {
   return selectedPhrases;
 })();
 
+/* Randomize array in-place using Durstenfeld shuffle algorithm */
+function shuffleArray<T>(array: T[]) {
+  for (var i = array.length - 1; i >= 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+  }
+}
+
 export default function HomePage() {
   // Checking if we're on the client or server
   const [isClient, setIsClient] = useState(false);
@@ -34,25 +45,44 @@ export default function HomePage() {
     setIsClient(true);
   }, []);
 
-  // Map each element in the chosen phrases array to an element
+  // Map each element in the chosen phrases array to a text card
   // Use state to keep track of which button is selected
   const [selectedTxtButton, setTxtButton] = useState(-1);
   const textCards = chosenPhrases.map((phrase) => {
     let cardText: string = isClient ? phrase.object + phrase.particle + phrase.kanji : "ローディング中";
     return (
-      <FlashCard
+      <TextCard
         key={phrase.id}
-        isImage={false}
         selected={selectedTxtButton === phrase.id}
         text={cardText}
         onSelect={() => setTxtButton(phrase.id)}
-      ></FlashCard>
+      ></TextCard>
     );
   });
 
-  const halfway = Math.ceil(textCards.length / 2);
-  const textCardsLeft = textCards.slice(0, halfway);
-  const textCardsRight = textCards.slice(halfway, textCards.length);
+  const halfwayText = Math.ceil(textCards.length / 2);
+  const textCardsLeft = textCards.slice(0, halfwayText);
+  const textCardsRight = textCards.slice(halfwayText, textCards.length);
+
+  // Map each element in the chosen phrases array to an image card
+  // Use state to keep track of which button is selected
+  const [selectedImgButton, setImgButton] = useState(-1);
+  const imgCards = chosenPhrases.map((phrase) => {
+    return (
+      <ImageCard
+        key={phrase.id}
+        selected={selectedImgButton === phrase.id}
+        image={isClient ? phrase.imageURL : undefined}
+        onSelect={() => setImgButton(phrase.id)}
+      ></ImageCard>
+    );
+  });
+
+  // Shuffle imgCards before we put everything together, to cause actual randomness in placement
+  shuffleArray(imgCards);
+  const halfwayImg = Math.ceil(textCards.length / 2);
+  const imgCardsLeft = imgCards.slice(0, halfwayImg);
+  const imgCardsRight = imgCards.slice(halfwayImg, imgCards.length);
   return (
     <>
       <Center>
@@ -76,12 +106,13 @@ export default function HomePage() {
           <Center>
             <Title order={1}>写真</Title>
           </Center>
+          {/* Grid which changes how many columns there are depending on
+          screen size */}
+          <Grid>
+            <Grid.Col span={{ base: 12, sm: 6 }}>{imgCardsLeft}</Grid.Col>
+            <Grid.Col span={{ base: 12, sm: 6 }}>{imgCardsRight}</Grid.Col>
+          </Grid>
         </Grid.Col>
-        {/* 
-        <Grid.Col span={{ base: 6, sm: 3 }}>teehee</Grid.Col>
-        <Grid.Col span={{ base: 6, sm: 3 }}>teehee</Grid.Col>
-        <Grid.Col span={{ base: 6, sm: 3 }}>teehee</Grid.Col>
-        <Grid.Col span={{ base: 6, sm: 3 }}>teehee</Grid.Col> */}
       </Grid>
     </>
   );
