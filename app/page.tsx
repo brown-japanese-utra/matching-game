@@ -3,8 +3,7 @@
 import { Center, Grid, Title } from "@mantine/core";
 import FlashCard from "./components/FlashCard/FlashCard";
 import { Phrase, phraseList } from "./components/Phrases";
-import { use, useCallback, useEffect, useMemo, useState } from "react";
-import { text } from "stream/consumers";
+import { useEffect, useState } from "react";
 
 export default function HomePage() {
   // Checking if we're on the client or server
@@ -34,9 +33,9 @@ export default function HomePage() {
   })();
 
   // Map each element in the chosen phrases array to an element
-  const textCards = chosenPhrases.map((phrase, idx) => {
+  const textCards = chosenPhrases.map((phrase) => {
     let cardText: string = isClient ? phrase.object + phrase.particle + phrase.kanji : "ローディング中";
-    return <FlashCard key={idx} isImage={false} text={cardText}></FlashCard>;
+    return <FlashCard key={phrase.id} isImage={false} text={cardText}></FlashCard>;
   });
   const halfway = Math.ceil(textCards.length / 2);
   const textCardsLeft = textCards.slice(0, halfway);
