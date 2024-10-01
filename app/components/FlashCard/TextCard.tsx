@@ -4,13 +4,24 @@ interface FlashCardProps {
   selected: boolean;
   text?: string;
   onSelect: any;
+  isCorrectMatch: boolean;
+  isIncorrectMatch: boolean;
 }
 
 export default function TextCard(props: FlashCardProps) {
-  const color = props.selected ? "blue" : "white";
-
+  const getColor = () => {
+    if (props.isCorrectMatch) return "green";
+    if (props.isIncorrectMatch) return "red";
+    if (props.selected) return "blue";
+    return "white";
+  };
   return (
-    <Button fullWidth color={color} onClick={props.onSelect} variant="outline">
+    <Button
+      fullWidth
+      color={getColor()}
+      onClick={props.onSelect}
+      variant="outline"
+    >
       <Paper p="sm" shadow="sm" radius="md">
         <Text ta="center" size="lg">
           {props.text}

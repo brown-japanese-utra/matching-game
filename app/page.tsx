@@ -1,6 +1,6 @@
 "use client";
 
-import { Center, Grid, Title, Image } from "@mantine/core";
+import { Center, Grid, Title, Image, Button, Space } from "@mantine/core";
 import TextCard from "./components/FlashCard/TextCard";
 import { Phrase, phraseList } from "./components/Phrases";
 import { useEffect, useState } from "react";
@@ -45,17 +45,33 @@ export default function HomePage() {
     setIsClient(true);
   }, []);
 
+  // Used for card colors. If there's a correct match, let the game know
+  const [isCorrectMatch, setIsCorrectMatch] = useState<boolean | null>(null);
+  const [isEvaluating, setIsEvaluating] = useState<boolean>(false);
+
   // Map each element in the chosen phrases array to a text card
   // Use state to keep track of which button is selected
   const [selectedTxtButton, setTxtButton] = useState(-1);
   const textCards = chosenPhrases.map((phrase) => {
-    let cardText: string = isClient ? phrase.object + phrase.particle + phrase.kanji : "ローディング中";
+    let cardText: string = isClient
+      ? phrase.object + phrase.particle + phrase.kanji
+      : "ローディング中";
     return (
       <TextCard
         key={phrase.id}
         selected={selectedTxtButton === phrase.id}
         text={cardText}
-        onSelect={() => setTxtButton(phrase.id)}
+        onSelect={() => (isEvaluating ? "" : setTxtButton(phrase.id))}
+        isCorrectMatch={
+          isCorrectMatch === true &&
+          isEvaluating &&
+          selectedTxtButton == phrase.id
+        }
+        isIncorrectMatch={
+          isCorrectMatch === false &&
+          isEvaluating &&
+          selectedTxtButton == phrase.id
+        }
       ></TextCard>
     );
   });
@@ -73,13 +89,41 @@ export default function HomePage() {
         key={phrase.id}
         selected={selectedImgButton === phrase.id}
         image={isClient ? phrase.imageURL : undefined}
-        onSelect={() => setImgButton(phrase.id)}
+        onSelect={() => (isEvaluating ? "" : setImgButton(phrase.id))}
+        isCorrectMatch={
+          isCorrectMatch === true &&
+          isEvaluating &&
+          selectedImgButton == phrase.id
+        }
+        isIncorrectMatch={
+          isCorrectMatch === false &&
+          isEvaluating &&
+          selectedImgButton == phrase.id
+        }
       ></ImageCard>
     );
   });
 
   // Shuffle imgCards before we put everything together, to cause actual randomness in placement
   shuffleArray(imgCards);
+
+  // Matching function
+  const checkMatch = () => {
+    setIsEvaluating(true);
+
+    // If the selected buttons are the same id, then it's a match
+    if (selectedTxtButton == selectedImgButton) {
+      setIsCorrectMatch(true);
+    } else {
+      setIsCorrectMatch(false);
+    }
+    setTimeout(() => {
+      setTxtButton(-1);
+      setImgButton(-1);
+      setIsEvaluating(false);
+    }, 3000);
+  };
+
   const halfwayImg = Math.ceil(textCards.length / 2);
   const imgCardsLeft = imgCards.slice(0, halfwayImg);
   const imgCardsRight = imgCards.slice(halfwayImg, imgCards.length);
@@ -87,6 +131,16 @@ export default function HomePage() {
     <>
       <Center>
         <Title order={1}>日本語のマッチングゲーム</Title>
+      </Center>
+      <Center>
+        <Button
+          onClick={() => checkMatch()}
+          disabled={
+            selectedImgButton == -1 || selectedTxtButton == -1 || isEvaluating
+          }
+        >
+          Evaluate
+        </Button>
       </Center>
       <Grid>
         {/* Words Half */}
