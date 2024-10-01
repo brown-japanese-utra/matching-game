@@ -3,7 +3,7 @@
 import { Center, Grid, Title, Image, Button, Space } from "@mantine/core";
 import TextCard from "./components/FlashCard/TextCard";
 import { Phrase, phraseList } from "./components/Phrases";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ImageCard from "./components/FlashCard/ImageCard";
 
 // Helper function for generating random numbers
@@ -27,14 +27,16 @@ const chosenPhrases = (function () {
   return selectedPhrases;
 })();
 
-/* Randomize array in-place using Durstenfeld shuffle algorithm */
+/* Randomize array not-in-place using Durstenfeld shuffle algorithm */
 function shuffleArray<T>(array: T[]) {
-  for (var i = array.length - 1; i >= 0; i--) {
+  let ret = array.slice(0);
+  for (var i = ret.length - 1; i >= 0; i--) {
     var j = Math.floor(Math.random() * (i + 1));
-    var temp = array[i];
-    array[i] = array[j];
-    array[j] = temp;
+    var temp = ret[i];
+    ret[i] = ret[j];
+    ret[j] = temp;
   }
+  return ret;
 }
 
 export default function HomePage() {
@@ -49,29 +51,32 @@ export default function HomePage() {
   const [isCorrectMatch, setIsCorrectMatch] = useState<boolean | null>(null);
   const [isEvaluating, setIsEvaluating] = useState<boolean>(false);
 
+  // Helper function to properly calculate the card color
+  function calcColor(selectorState: number, cardId: number): string {
+    if (selectorState === cardId) {
+      if (isEvaluating && isCorrectMatch) {
+        return "green";
+      } else if (isEvaluating && !isCorrectMatch) {
+        return "red";
+      } else {
+        return "blue";
+      }
+    } else {
+      return "white";
+    }
+  }
+
   // Map each element in the chosen phrases array to a text card
   // Use state to keep track of which button is selected
   const [selectedTxtButton, setTxtButton] = useState(-1);
   const textCards = chosenPhrases.map((phrase) => {
-    let cardText: string = isClient
-      ? phrase.object + phrase.particle + phrase.kanji
-      : "ローディング中";
+    let cardText: string = isClient ? phrase.object + phrase.particle + phrase.kanji : "ローディング中";
     return (
       <TextCard
         key={phrase.id}
-        selected={selectedTxtButton === phrase.id}
         text={cardText}
         onSelect={() => (isEvaluating ? "" : setTxtButton(phrase.id))}
-        isCorrectMatch={
-          isCorrectMatch === true &&
-          isEvaluating &&
-          selectedTxtButton == phrase.id
-        }
-        isIncorrectMatch={
-          isCorrectMatch === false &&
-          isEvaluating &&
-          selectedTxtButton == phrase.id
-        }
+        color={calcColor(selectedTxtButton, phrase.id)}
       ></TextCard>
     );
   });
@@ -80,32 +85,25 @@ export default function HomePage() {
   const textCardsLeft = textCards.slice(0, halfwayText);
   const textCardsRight = textCards.slice(halfwayText, textCards.length);
 
+  // Shuffle the phrases so images get picked in a different order than the text
+  // Use memo to ensure this only happens once
+  const shuffledPhrases = useMemo(() => {
+    return shuffleArray(chosenPhrases);
+  }, []);
+
   // Map each element in the chosen phrases array to an image card
   // Use state to keep track of which button is selected
   const [selectedImgButton, setImgButton] = useState(-1);
-  const imgCards = chosenPhrases.map((phrase) => {
+  const imgCards = shuffledPhrases.map((phrase) => {
     return (
       <ImageCard
         key={phrase.id}
-        selected={selectedImgButton === phrase.id}
         image={isClient ? phrase.imageURL : undefined}
         onSelect={() => (isEvaluating ? "" : setImgButton(phrase.id))}
-        isCorrectMatch={
-          isCorrectMatch === true &&
-          isEvaluating &&
-          selectedImgButton == phrase.id
-        }
-        isIncorrectMatch={
-          isCorrectMatch === false &&
-          isEvaluating &&
-          selectedImgButton == phrase.id
-        }
+        color={calcColor(selectedImgButton, phrase.id)}
       ></ImageCard>
     );
   });
-
-  // Shuffle imgCards before we put everything together, to cause actual randomness in placement
-  shuffleArray(imgCards);
 
   // Matching function
   const checkMatch = () => {
@@ -135,9 +133,7 @@ export default function HomePage() {
       <Center>
         <Button
           onClick={() => checkMatch()}
-          disabled={
-            selectedImgButton == -1 || selectedTxtButton == -1 || isEvaluating
-          }
+          disabled={selectedImgButton == -1 || selectedTxtButton == -1 || isEvaluating}
         >
           Evaluate
         </Button>
