@@ -15,14 +15,16 @@ const randomNumberInRange = (min: number, max: number) => {
 // It should run this function once upon initial loadup of the page
 // TODO: change for loop based on number of cards someone wants
 let phraseListClone = [...phraseList];
-let cardsAmt = 5;
+let cardsAmt = 6;
 
 const chosenPhrases = (function () {
   let selectedPhrases: Phrase[] = [];
-  for (let i = 0; i < cardsAmt; i++) {
+  for (let i = 0; i < cardsAmt; i += 2) {
     let ind = randomNumberInRange(0, phraseListClone.length - 1);
-    selectedPhrases.push(phraseListClone[ind]);
-    phraseListClone.splice(ind, 1);
+    let startOfPair = ind % 2 === 0 ? ind : ind - 1;
+    selectedPhrases.push(phraseListClone[startOfPair]);
+    selectedPhrases.push(phraseListClone[startOfPair + 1]);
+    phraseListClone.splice(startOfPair, 2);
   }
   return selectedPhrases;
 })();
@@ -66,10 +68,17 @@ export default function HomePage() {
     }
   }
 
+  // Shuffle the phrases so pairs don't appear next to each other
+  // Use memo to ensure this only happens once
+  const shuffledForTxt = useMemo(() => {
+    return shuffleArray(chosenPhrases);
+  }, []);
+
   // Map each element in the chosen phrases array to a text card
   // Use state to keep track of which button is selected
   const [selectedTxtButton, setTxtButton] = useState(-1);
-  const textCards = chosenPhrases.map((phrase) => {
+  // Use state to keep track of which audio is playing
+  const textCards = shuffledForTxt.map((phrase) => {
     let cardText: string = isClient ? phrase.object + phrase.particle + phrase.kanji : "ローディング中";
     return (
       <TextCard
@@ -77,6 +86,7 @@ export default function HomePage() {
         text={cardText}
         onSelect={() => (isEvaluating ? "" : setTxtButton(phrase.id))}
         color={calcColor(selectedTxtButton, phrase.id)}
+        audio={phrase.audioURL}
       ></TextCard>
     );
   });
@@ -87,14 +97,14 @@ export default function HomePage() {
 
   // Shuffle the phrases so images get picked in a different order than the text
   // Use memo to ensure this only happens once
-  const shuffledPhrases = useMemo(() => {
+  const shuffledForImg = useMemo(() => {
     return shuffleArray(chosenPhrases);
   }, []);
 
   // Map each element in the chosen phrases array to an image card
   // Use state to keep track of which button is selected
   const [selectedImgButton, setImgButton] = useState(-1);
-  const imgCards = shuffledPhrases.map((phrase) => {
+  const imgCards = shuffledForImg.map((phrase) => {
     return (
       <ImageCard
         key={phrase.id}
