@@ -1,6 +1,6 @@
 "use client";
 
-import { Center, Grid, Title, Image, Button, Space } from "@mantine/core";
+import { Center, Grid, Title, Image, Button, Space, Radio, Group } from "@mantine/core";
 import TextCard from "./components/FlashCard/TextCard";
 import { Phrase, phraseList } from "./components/Phrases";
 import { useEffect, useMemo, useState } from "react";
@@ -140,14 +140,34 @@ export default function HomePage() {
       <Center>
         <Title order={1}>日本語のマッチングゲーム</Title>
       </Center>
-      <Center>
-        <Button
-          onClick={() => checkMatch()}
-          disabled={selectedImgButton == -1 || selectedTxtButton == -1 || isEvaluating}
-        >
-          Evaluate
-        </Button>
-      </Center>
+      <Grid>
+        <Grid.Col span={4}>
+          <Center>
+            <Radio.Group name="difficulty" label="Select your difficulty!">
+              <Group mt="xs">
+                <Radio value="easy" label="Easy" />
+                <Radio value="medium" label="Medium" />
+                <Radio value="hard" label="Hard" />
+              </Group>
+            </Radio.Group>
+          </Center>
+        </Grid.Col>
+        <Grid.Col span={4}>
+          <Center>
+            <Button
+              onClick={() => checkMatch()}
+              disabled={selectedImgButton == -1 || selectedTxtButton == -1 || isEvaluating}
+            >
+              Evaluate
+            </Button>
+          </Center>
+        </Grid.Col>
+        <Grid.Col span={4}>
+          <Center>
+            <Button onClick={() => null}>Generate</Button>
+          </Center>
+        </Grid.Col>
+      </Grid>
       <Grid>
         {/* Words Half */}
         <Grid.Col span={6}>
