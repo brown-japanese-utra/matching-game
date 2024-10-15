@@ -1,6 +1,15 @@
 "use client";
 
-import { Center, Grid, Title, Image, Button, Space, Radio, Group } from "@mantine/core";
+import {
+  Center,
+  Grid,
+  Title,
+  Image,
+  Button,
+  Space,
+  Radio,
+  Group,
+} from "@mantine/core";
 import TextCard from "./components/FlashCard/TextCard";
 import { Phrase, phraseList } from "./components/Phrases";
 import { useEffect, useMemo, useState } from "react";
@@ -49,10 +58,16 @@ export default function HomePage() {
   // Checking if we're on the client or server
   const [isClient, setIsClient] = useState(false);
 
+  // Scoring and streak
+  const [score, setScore] = useState(0);
+  const [streak, setStreak] = useState(0);
+
   // Use state to track the chosen phrases, since we reshuffle them
   // Also track difficulty
   const [difficulty, setDifficulty] = useState("easy");
-  const [chosenPhrases, setChosenPhrases] = useState(choosePhrases(difficultyMap[difficulty]));
+  const [chosenPhrases, setChosenPhrases] = useState(
+    choosePhrases(difficultyMap[difficulty])
+  );
 
   useEffect(() => {
     setIsClient(true);
@@ -88,7 +103,9 @@ export default function HomePage() {
   const [selectedTxtButton, setTxtButton] = useState(-1);
   // Use state to keep track of which audio is playing
   const textCards = shuffledForTxt.map((phrase) => {
-    let cardText: string = isClient ? phrase.object + phrase.particle + phrase.kanji : "ローディング中";
+    let cardText: string = isClient
+      ? phrase.object + phrase.particle + phrase.kanji
+      : "ローディング中";
     return (
       <TextCard
         key={phrase.id}
@@ -131,8 +148,11 @@ export default function HomePage() {
     // If the selected buttons are the same id, then it's a match
     if (selectedTxtButton == selectedImgButton) {
       setIsCorrectMatch(true);
+      setStreak(streak + 1);
+      setScore(score + 1000 * (streak + 1));
     } else {
       setIsCorrectMatch(false);
+      setStreak(0);
     }
     setTimeout(() => {
       setTxtButton(-1);
@@ -147,12 +167,19 @@ export default function HomePage() {
   return (
     <>
       <Center>
-        <Title order={1}>日本語のマッチングゲーム</Title>
+        <Title order={1}>
+          日本語のマッチングゲーム {"Score: " + score} {" Streak: " + streak}
+        </Title>
       </Center>
       <Grid>
         <Grid.Col span={4}>
           <Center>
-            <Radio.Group name="difficulty" label="Select your difficulty!" value={difficulty} onChange={setDifficulty}>
+            <Radio.Group
+              name="difficulty"
+              label="Select your difficulty!"
+              value={difficulty}
+              onChange={setDifficulty}
+            >
               <Group mt="xs">
                 <Radio value="easy" label="Easy" />
                 <Radio value="medium" label="Medium" />
@@ -165,7 +192,11 @@ export default function HomePage() {
           <Center>
             <Button
               onClick={() => checkMatch()}
-              disabled={selectedImgButton == -1 || selectedTxtButton == -1 || isEvaluating}
+              disabled={
+                selectedImgButton == -1 ||
+                selectedTxtButton == -1 ||
+                isEvaluating
+              }
             >
               Evaluate
             </Button>
@@ -173,7 +204,13 @@ export default function HomePage() {
         </Grid.Col>
         <Grid.Col span={4}>
           <Center>
-            <Button onClick={() => setChosenPhrases(choosePhrases(difficultyMap[difficulty]))}>Generate</Button>
+            <Button
+              onClick={() =>
+                setChosenPhrases(choosePhrases(difficultyMap[difficulty]))
+              }
+            >
+              Generate
+            </Button>
           </Center>
         </Grid.Col>
       </Grid>
