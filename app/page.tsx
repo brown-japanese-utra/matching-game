@@ -5,7 +5,6 @@ import TextCard from "./components/FlashCard/TextCard";
 import { Phrase, phraseList } from "./components/Phrases";
 import { useEffect, useMemo, useState } from "react";
 import ImageCard from "./components/FlashCard/ImageCard";
-import { title } from "process";
 
 const difficultyMap: { [key: string]: number } = {
   easy: 6,
