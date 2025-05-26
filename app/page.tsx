@@ -1,15 +1,6 @@
 "use client";
 
-import {
-  Center,
-  Grid,
-  Title,
-  Image,
-  Button,
-  Space,
-  Radio,
-  Group,
-} from "@mantine/core";
+import { Center, Grid, Title, Image, Button, Space, Radio, Group } from "@mantine/core";
 import TextCard from "./components/FlashCard/TextCard";
 import { Phrase, phraseList } from "./components/Phrases";
 import { useEffect, useMemo, useState } from "react";
@@ -19,6 +10,7 @@ const difficultyMap: { [key: string]: number } = {
   easy: 6,
   medium: 8,
   hard: 10,
+  endless: 10,
 };
 
 // Helper function for generating random numbers
@@ -40,6 +32,22 @@ function choosePhrases(cardsAmt: number): Phrase[] {
     phraseListClone.splice(startOfPair, 2);
   }
   return selectedPhrases;
+}
+
+// Function to replace the chosen phrase in a list with a random new one not currently in the list
+function replacePhrase(phrases: Phrase[], phraseId: number): Phrase[] {
+  console.log(phraseId);
+  let newId = phrases[0].id;
+  let ind = 0;
+  // As long as we keep finding something in our list, reroll
+  while (phrases.findIndex((phrase) => phrase.id == newId) != -1) {
+    ind = randomNumberInRange(0, phraseList.length - 1);
+    console.log(ind);
+    newId = phraseList[ind].id;
+  }
+  let replaceInd = phrases.findIndex((phrase) => phrase.id == phraseId);
+  phrases[replaceInd] = phraseList[ind];
+  return phrases;
 }
 
 /* Randomize array not-in-place using Durstenfeld shuffle algorithm */
@@ -65,9 +73,7 @@ export default function HomePage() {
   // Use state to track the chosen phrases, since we reshuffle them
   // Also track difficulty
   const [difficulty, setDifficulty] = useState("easy");
-  const [chosenPhrases, setChosenPhrases] = useState(
-    choosePhrases(difficultyMap[difficulty])
-  );
+  const [chosenPhrases, setChosenPhrases] = useState(choosePhrases(difficultyMap[difficulty]));
 
   useEffect(() => {
     setIsClient(true);
@@ -93,19 +99,18 @@ export default function HomePage() {
   }
 
   // Shuffle the phrases so pairs don't appear next to each other
-  // Use memo to ensure this only happens once
+  // Use memo to ensure this only happens when our array actually changes
   const shuffledForTxt = useMemo(() => {
+    console.log("Running memo shuffle txt");
     return shuffleArray(chosenPhrases);
-  }, [chosenPhrases]);
+  }, [JSON.stringify(chosenPhrases)]);
 
   // Map each element in the chosen phrases array to a text card
   // Use state to keep track of which button is selected
   const [selectedTxtButton, setTxtButton] = useState(-1);
   // Use state to keep track of which audio is playing
   const textCards = shuffledForTxt.map((phrase) => {
-    let cardText: string = isClient
-      ? phrase.object + phrase.particle + phrase.kanji
-      : "ローディング中";
+    let cardText: string = isClient ? phrase.object + phrase.particle + phrase.kanji : "ローディング中";
     return (
       <TextCard
         key={phrase.id}
@@ -122,10 +127,10 @@ export default function HomePage() {
   const textCardsRight = textCards.slice(halfwayText, textCards.length);
 
   // Shuffle the phrases so images get picked in a different order than the text
-  // Use memo to ensure this only happens once
+  // Use memo to ensure this only happens when our array actually changes
   const shuffledForImg = useMemo(() => {
     return shuffleArray(chosenPhrases);
-  }, [chosenPhrases]);
+  }, [JSON.stringify(chosenPhrases)]);
 
   // Map each element in the chosen phrases array to an image card
   // Use state to keep track of which button is selected
@@ -150,6 +155,8 @@ export default function HomePage() {
       setIsCorrectMatch(true);
       setStreak(streak + 1);
       setScore(score + 1000 * (streak + 1));
+      setChosenPhrases(replacePhrase(chosenPhrases, selectedTxtButton));
+      console.log(chosenPhrases);
     } else {
       setIsCorrectMatch(false);
       setStreak(0);
@@ -174,16 +181,12 @@ export default function HomePage() {
       <Grid>
         <Grid.Col span={4}>
           <Center>
-            <Radio.Group
-              name="difficulty"
-              label="Select your difficulty!"
-              value={difficulty}
-              onChange={setDifficulty}
-            >
+            <Radio.Group name="difficulty" label="Select your difficulty!" value={difficulty} onChange={setDifficulty}>
               <Group mt="xs">
                 <Radio value="easy" label="Easy" />
                 <Radio value="medium" label="Medium" />
                 <Radio value="hard" label="Hard" />
+                <Radio value="endless" label="Endless" />
               </Group>
             </Radio.Group>
           </Center>
@@ -192,11 +195,7 @@ export default function HomePage() {
           <Center>
             <Button
               onClick={() => checkMatch()}
-              disabled={
-                selectedImgButton == -1 ||
-                selectedTxtButton == -1 ||
-                isEvaluating
-              }
+              disabled={selectedImgButton == -1 || selectedTxtButton == -1 || isEvaluating}
             >
               Evaluate
             </Button>
@@ -204,13 +203,7 @@ export default function HomePage() {
         </Grid.Col>
         <Grid.Col span={4}>
           <Center>
-            <Button
-              onClick={() =>
-                setChosenPhrases(choosePhrases(difficultyMap[difficulty]))
-              }
-            >
-              Generate
-            </Button>
+            <Button onClick={() => setChosenPhrases(choosePhrases(difficultyMap[difficulty]))}>Generate</Button>
           </Center>
         </Grid.Col>
       </Grid>
