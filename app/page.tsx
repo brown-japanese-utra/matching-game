@@ -5,6 +5,7 @@ import TextCard from "./components/FlashCard/TextCard";
 import { Phrase, phraseList } from "./components/Phrases";
 import { useEffect, useMemo, useState } from "react";
 import ImageCard from "./components/FlashCard/ImageCard";
+import { title } from "process";
 
 const difficultyMap: { [key: string]: number } = {
   easy: 6,
@@ -66,9 +67,10 @@ export default function HomePage() {
   // Checking if we're on the client or server
   const [isClient, setIsClient] = useState(false);
 
-  // Scoring and streak
+  // Scoring, streak, and lives for Endless mode
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
+  const [lives, setLives] = useState(3);
 
   // Use state to track the chosen phrases, since we reshuffle them
   // Also track difficulty
@@ -148,6 +150,7 @@ export default function HomePage() {
 
   // Matching function
   const checkMatch = () => {
+    if (lives == 0) return;
     setIsEvaluating(true);
 
     // If the selected buttons are the same id, then it's a match
@@ -155,11 +158,12 @@ export default function HomePage() {
       setIsCorrectMatch(true);
       setStreak(streak + 1);
       setScore(score + 1000 * (streak + 1));
-      setChosenPhrases(replacePhrase(chosenPhrases, selectedTxtButton));
+      if (difficulty === "endless") setChosenPhrases(replacePhrase(chosenPhrases, selectedTxtButton));
       console.log(chosenPhrases);
     } else {
       setIsCorrectMatch(false);
       setStreak(0);
+      setLives(lives - 1);
     }
     setTimeout(() => {
       setTxtButton(-1);
@@ -171,13 +175,34 @@ export default function HomePage() {
   const halfwayImg = Math.ceil(textCards.length / 2);
   const imgCardsLeft = imgCards.slice(0, halfwayImg);
   const imgCardsRight = imgCards.slice(halfwayImg, imgCards.length);
+
+  let titleBar;
+
+  if (difficulty === "endless") {
+    titleBar = (
+      <Title order={1}>
+        日本語のマッチングゲーム {"Score: " + score} {" Streak: " + streak} {"Lives: " + lives}
+      </Title>
+    );
+    if (lives === 0) {
+      titleBar = (
+        <Title order={1}>
+          日本語のマッチングゲーム {"Score: " + score} {" Streak: " + streak}{" "}
+          {"Lives: " + lives + ' Nice job! Press "Generate" to go again!'}
+        </Title>
+      );
+    }
+  } else {
+    titleBar = (
+      <Title order={1}>
+        日本語のマッチングゲーム {"Score: " + score} {" Streak: " + streak}
+      </Title>
+    );
+  }
+
   return (
     <>
-      <Center>
-        <Title order={1}>
-          日本語のマッチングゲーム {"Score: " + score} {" Streak: " + streak}
-        </Title>
-      </Center>
+      <Center>{titleBar}</Center>
       <Grid>
         <Grid.Col span={4}>
           <Center>
@@ -203,7 +228,16 @@ export default function HomePage() {
         </Grid.Col>
         <Grid.Col span={4}>
           <Center>
-            <Button onClick={() => setChosenPhrases(choosePhrases(difficultyMap[difficulty]))}>Generate</Button>
+            <Button
+              onClick={() => {
+                setChosenPhrases(choosePhrases(difficultyMap[difficulty]));
+                setScore(0);
+                setStreak(0);
+                setLives(3);
+              }}
+            >
+              Generate
+            </Button>
           </Center>
         </Grid.Col>
       </Grid>
