@@ -18,7 +18,7 @@ export const phraseList: Phrase[] = [
     particle: "を",
     kanji: "閉める",
     hiragana: "しめる",
-    imageURL: "images/ドアを閉める.jpg",
+    imageURL: "images/door_close_t.png",
     audioURL: "audio/door_close_t.mp3",
   },
   {
@@ -27,7 +27,7 @@ export const phraseList: Phrase[] = [
     particle: "が",
     kanji: "閉まる",
     hiragana: "しまる",
-    imageURL: "images/ドアが閉まる.jpg",
+    imageURL: "images/door_close_i.png",
     audioURL: "audio/door_close_i.mp3",
   },
   {
@@ -36,7 +36,7 @@ export const phraseList: Phrase[] = [
     particle: "を",
     kanji: "開ける",
     hiragana: "あける",
-    imageURL: "images/ドアを開ける.jpg",
+    imageURL: "images/door_open_t.png",
     audioURL: "audio/door_open_t.mp3",
   },
   {
@@ -45,7 +45,7 @@ export const phraseList: Phrase[] = [
     particle: "が",
     kanji: "開く",
     hiragana: "あく",
-    imageURL: "images/ドアが開く.jpg",
+    imageURL: "images/door_open_i.png",
     audioURL: "audio/door_open_i.mp3",
   },
   {
@@ -54,7 +54,7 @@ export const phraseList: Phrase[] = [
     particle: "を",
     kanji: "つける",
     hiragana: "つける",
-    imageURL: "images/電気をつける.jpg",
+    imageURL: "images/light_on_t.png",
     audioURL: "audio/light_on_t.mp3",
   },
   {
@@ -63,7 +63,7 @@ export const phraseList: Phrase[] = [
     particle: "が",
     kanji: "つく",
     hiragana: "つく",
-    imageURL: "images/電気がつく.jpg",
+    imageURL: "images/light_on_i.png",
     audioURL: "audio/light_on_i.mp3",
   },
   {
@@ -72,7 +72,7 @@ export const phraseList: Phrase[] = [
     particle: "を",
     kanji: "消す",
     hiragana: "けす",
-    imageURL: "images/電気を消す.jpg",
+    imageURL: "images/light_off_t.png",
     audioURL: "audio/light_off_t.mp3",
   },
   {
@@ -81,7 +81,7 @@ export const phraseList: Phrase[] = [
     particle: "が",
     kanji: "消える",
     hiragana: "きえる",
-    imageURL: "images/電気が消える.jpg",
+    imageURL: "images/light_off_i.png",
     audioURL: "audio/light_off_i.mp3",
   },
   {
@@ -90,7 +90,7 @@ export const phraseList: Phrase[] = [
     particle: "を",
     kanji: "汚す",
     hiragana: "よごす",
-    imageURL: "images/シャツを汚す.jpg",
+    imageURL: "images/shirt_dirty_t.png",
     audioURL: "audio/shirt_dirty_t.mp3",
   },
   {
@@ -99,7 +99,7 @@ export const phraseList: Phrase[] = [
     particle: "が",
     kanji: "汚れる",
     hiragana: "よごれる",
-    imageURL: "images/シャツが汚れる.jpg",
+    imageURL: "images/shirt_dirty_i.png",
     audioURL: "audio/shirt_dirty_i.mp3",
   },
   {
@@ -108,8 +108,8 @@ export const phraseList: Phrase[] = [
     particle: "を",
     kanji: "こわす",
     hiragana: "こわす",
-    imageURL: "images/おもちゃを壊す.jpg",
-    audioURL: "audio/おもちゃを壊す.mp3",
+    imageURL: "images/toy_break_t.png",
+    audioURL: "audio/toy_break_t.mp3",
   },
   {
     id: 11,
@@ -117,8 +117,8 @@ export const phraseList: Phrase[] = [
     particle: "が",
     kanji: "こわれる",
     hiragana: "こわれる",
-    imageURL: "images/おもちゃが壊れる.jpg",
-    audioURL: "audio/おもちゃが壊れる.mp3",
+    imageURL: "images/toy_break_i.png",
+    audioURL: "audio/toy_break_i.mp3",
   },
   {
     id: 12,
@@ -126,8 +126,8 @@ export const phraseList: Phrase[] = [
     particle: "を",
     kanji: "入れる",
     hiragana: "いれる",
-    imageURL: "https://play.pokemonshowdown.com/sprites/ani/pikachu-f.gif",
-    audioURL: "audio/犬を入れる.mp3",
+    imageURL: "images/dog_enter_t.png",
+    audioURL: "audio/dog_enter_t.mp3",
   },
   {
     id: 13,
@@ -135,8 +135,8 @@ export const phraseList: Phrase[] = [
     particle: "が",
     kanji: "入る",
     hiragana: "はいる",
-    imageURL: "https://play.pokemonshowdown.com/sprites/ani/pikachu-f.gif",
-    audioURL: "audio/犬が入る.mp3",
+    imageURL: "images/dog_enter_i.png",
+    audioURL: "audio/dog_enter_i.mp3",
   },
   {
     id: 14,
@@ -144,8 +144,8 @@ export const phraseList: Phrase[] = [
     particle: "を",
     kanji: "出す",
     hiragana: "だす",
-    imageURL: "https://play.pokemonshowdown.com/sprites/ani/pikachu-f.gif",
-    audioURL: "audio/猫を出す.mp3",
+    imageURL: "images/cat_leave_t.png",
+    audioURL: "audio/cat_leave_t.mp3",
   },
   {
     id: 15,
@@ -153,8 +153,8 @@ export const phraseList: Phrase[] = [
     particle: "が",
     kanji: "出る",
     hiragana: "でる",
-    imageURL: "https://play.pokemonshowdown.com/sprites/ani/pikachu-f.gif",
-    audioURL: "audio/猫が出る.mp3",
+    imageURL: "images/cat_leave_i.png",
+    audioURL: "audio/cat_leave_i.mp3",
   },
   {
     id: 16,
@@ -162,8 +162,8 @@ export const phraseList: Phrase[] = [
     particle: "を",
     kanji: "おとす",
     hiragana: "おとす",
-    imageURL: "images/ペンを落とす.jpg",
-    audioURL: "audio/ペンを落とす.mp3",
+    imageURL: "images/pen_fall_t.png",
+    audioURL: "audio/pen_fall_t.mp3",
   },
   {
     id: 17,
@@ -171,8 +171,8 @@ export const phraseList: Phrase[] = [
     particle: "が",
     kanji: "おちる",
     hiragana: "おちる",
-    imageURL: "https://play.pokemonshowdown.com/sprites/ani/pikachu-f.gif",
-    audioURL: "audio/ペンが落ちる.mp3",
+    imageURL: "images/pen_fall_i.png",
+    audioURL: "audio/pen_fall_i.mp3",
   },
   {
     id: 18,
@@ -180,8 +180,8 @@ export const phraseList: Phrase[] = [
     particle: "を",
     kanji: "わかす",
     hiragana: "わかす",
-    imageURL: "images/お湯を沸かす.jpg",
-    audioURL: "audio/お湯を沸かす.mp3",
+    imageURL: "images/water_boil_t.png",
+    audioURL: "audio/water_boil_t.mp3",
   },
   {
     id: 19,
@@ -189,7 +189,7 @@ export const phraseList: Phrase[] = [
     particle: "が",
     kanji: "わく",
     hiragana: "わく",
-    imageURL: "images/お湯が沸く.jpg",
-    audioURL: "audio/お湯が沸く.mp3",
+    imageURL: "images/water_boil_i.png",
+    audioURL: "audio/water_boil_i.mp3",
   },
 ];
